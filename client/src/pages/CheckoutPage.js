@@ -109,7 +109,7 @@ const CheckoutPage = (props) => {
      <Title>Checkout</Title>
     </li>
     <li className='product-info-row'>
-     <p>Items</p>
+     <p>Price of Products</p>
      <span>${productsPrice}</span>
     </li>
     <li className='product-info-row'>

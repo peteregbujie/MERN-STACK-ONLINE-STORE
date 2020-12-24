@@ -21,9 +21,11 @@
   "cors": "^2.8.5",
   "dotenv": "^8.2.0",
   "express": "^4.17.1",
+  "express-openid-connect": "^2.1.0",
   "express-validator": "^6.6.1",
   "jsonwebtoken": "^8.5.1",
   "mongoose": "^5.10.0",
+  "morgan": "^1.10.0",
   "multer": "^1.4.2",
   "slugify": "^1.4.6",
   "stripe": "^8.114.0"

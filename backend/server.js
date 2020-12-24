@@ -1,5 +1,7 @@
 import dotenv from 'dotenv';
 import express from 'express';
+import { auth } from 'express-openid-connect';
+import morgan from 'morgan';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import getConnection from './config/db.js';
@@ -17,6 +19,15 @@ getConnection();
 
 // load app middleware
 const app = express();
+
+// log only 4xx and 5xx responses to console
+app.use(
+ morgan('dev', {
+  skip: function (req, res) {
+   return res.statusCode < 400;
+  },
+ })
+);
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use('/api/users', userRoute);
@@ -25,12 +36,24 @@ app.use('/api/categories', categoryRoute);
 app.use('/api/orders', orderRoute);
 app.use('/api/uploads', uploadRoute);
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
+app.use(
+ auth({
+  authRequired: false,
+  auth0Logout: true,
+  issuerBaseURL: process.env.ISSUER_BASE_URL,
+  baseURL: process.env.BASE_URL,
+  clientID: process.env.CLIENT_ID,
+  secret: process.env.SECRET,
+ })
+);
 
 // Serve static assets if in production
 if (process.env.NODE_ENV === 'production') {
  app.use(express.static(path.join(__dirname, '../client/build'))); // location of static files.
- app.get('*', (req, res) =>
-  res.sendFile(path.resolve(__dirname, '..', 'client', 'build', 'index.html'))
+ app.get(
+  '*',
+  (req, res) =>
+   res.sendFile(path.resolve(__dirname, '..', 'client', 'build', 'index.html')) // location of index.html
  );
 } else {
  app.get('/', (req, res) => {
